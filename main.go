@@ -112,6 +112,7 @@ func main() {
 		file.Save()
 	}
 
+	// Log performance to command line for general interest purposes
 	elapsed := time.Since(start)
 	fmt.Printf("Execution completed.\n")
 	fmt.Printf("Operation took %s\n", elapsed)
