@@ -72,21 +72,17 @@ func main() {
 		newSheet := "Analysis " + time.Now().Local().Format(time.Stamp)
 
 		file.NewSheet(newSheet)
-		xCoor := 0
-		yCoor := 1
+		xCoordinate := 0
+		yCoordinate := 1
 		file.SetSheetRow(newSheet, "A1", &[]interface{}{"FILE", "SET", "ZSSL", "CONT", "COST", "IPI", "#"})
 		for ref, count := range shipmentRefCounts {
-			// fmt.Println("newRow", newRow)
-			newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoor, yCoor, false, false)
-			// fmt.Println("newRowCoor", newRowCoordinates)
+			newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
 			file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{"", "", "", "", "", ref, count})
-			// fmt.Println("ref", ref)
-			// fmt.Println("count", count)
-			yCoor++
+			yCoordinate++
 		}
 
 		file.Save()
 	}
 	elapsed := time.Since(start)
-	fmt.Printf("Execution took %s\n", elapsed)
+	fmt.Printf("Execution completed. Operation took %s\n", elapsed)
 }
