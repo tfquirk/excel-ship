@@ -37,6 +37,7 @@ func main() {
 			return
 		}
 
+		// Read each company name in the IPI tab, and create map
 		IPIRows, err := file.GetRows("IPI")
 		IPINames := make(map[string]bool)
 		for name := range IPIRows {
@@ -45,22 +46,36 @@ func main() {
 			IPINames[companyName] = true
 		}
 
-		shipmentRefCounts := make(map[string]int)
+		// instantiate a map of fileNumbers to keep track of multiple files
+		mapOfFileNumbers := make(map[string]map[string]int)
+
+		// Get all rows in the Complete Summary tab
 		CompleteSummaryRows, err := file.GetRows("Complete Summary")
 		for id := range CompleteSummaryRows {
 			currentRow := xlsx.RowIndexToString(id)
+			fileNumber, _ := file.GetCellValue("Complete Summary", "B"+currentRow)
 			accountsPayable, _ := file.GetCellValue("Complete Summary", "E"+currentRow)
 			company, _ := file.GetCellValue("Complete Summary", "J"+currentRow)
 
+			// only track items if col J = A/P and if company is in the list of IPI companies
 			if accountsPayable == "A/P" && IPINames[company] {
 				shipmentReferenceCell := "O" + currentRow
 				clientID, _ := file.GetCellValue("Complete Summary", shipmentReferenceCell)
 
+				// only track shipment ref numbers that are 12 numbers in length
 				if len(clientID) == 12 {
-					if shipmentRefCounts[clientID] >= 1 {
-						shipmentRefCounts[clientID]++
+
+					// if the file number is already tracking the shipment ref num, increase it by one
+					if mapOfFileNumbers[fileNumber][clientID] >= 1 {
+						mapOfFileNumbers[fileNumber][clientID]++
 					} else {
-						shipmentRefCounts[clientID] = 1
+						// instantiate shipment ref number
+						if _, err := mapOfFileNumbers[fileNumber]; !err {
+							mapOfFileNumbers[fileNumber] = make(map[string]int)
+						}
+
+						// count the first shipment ref after instantiation
+						mapOfFileNumbers[fileNumber][clientID] = 1
 					}
 				}
 			} else {
@@ -69,20 +84,29 @@ func main() {
 
 		}
 
+		// uniquely name and create new sheet
 		newSheet := "Analysis " + time.Now().Local().Format(time.Stamp)
-
 		file.NewSheet(newSheet)
+
+		// track position so we can dynamically write new rows
 		xCoordinate := 0
 		yCoordinate := 1
 		file.SetSheetRow(newSheet, "A1", &[]interface{}{"FILE", "SET", "ZSSL", "CONT", "COST", "IPI", "#"})
-		for ref, count := range shipmentRefCounts {
+		for fileNum, items := range mapOfFileNumbers {
+			for refNum, count := range items {
+				newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
+				file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{fileNum, "", "", "", "", refNum, count})
+				yCoordinate++
+			}
+
 			newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
-			file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{"", "", "", "", "", ref, count})
+			file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{"", "", "", "", "", "", ""})
 			yCoordinate++
 		}
 
 		file.Save()
 	}
 	elapsed := time.Since(start)
-	fmt.Printf("Execution completed. Operation took %s\n", elapsed)
+	fmt.Printf("Execution completed.\n")
+	fmt.Printf("Operation took %s\n", elapsed)
 }
