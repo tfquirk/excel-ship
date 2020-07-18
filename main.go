@@ -91,7 +91,11 @@ func main() {
 		// track position so we can dynamically write new rows
 		xCoordinate := 0
 		yCoordinate := 1
+
+		// set row header
 		file.SetSheetRow(newSheet, "A1", &[]interface{}{"FILE", "SET", "ZSSL", "CONT", "COST", "IPI", "#"})
+
+		// loop over each file and nested shipments
 		for fileNum, items := range mapOfFileNumbers {
 			for refNum, count := range items {
 				newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
@@ -99,6 +103,7 @@ func main() {
 				yCoordinate++
 			}
 
+			// Add empty line between different files
 			newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
 			file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{"", "", "", "", "", "", ""})
 			yCoordinate++
@@ -106,6 +111,7 @@ func main() {
 
 		file.Save()
 	}
+
 	elapsed := time.Since(start)
 	fmt.Printf("Execution completed.\n")
 	fmt.Printf("Operation took %s\n", elapsed)
