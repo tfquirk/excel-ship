@@ -29,6 +29,14 @@ func main() {
 		}
 	}
 
+	// If no Excel files, bail gracefully
+	if len(excelFiles) == 0 {
+		elapsed := time.Since(start)
+		fmt.Println("Execution ceased because no Excel files were found.")
+		fmt.Printf("Operation exited after %s\n", elapsed)
+		return
+	}
+
 	// read each Excel file, and count number of shipment references
 	for _, excelFileName := range excelFiles {
 		file, err := excelize2.OpenFile(excelFileName)
@@ -78,10 +86,7 @@ func main() {
 						mapOfFileNumbers[fileNumber][clientID] = 1
 					}
 				}
-			} else {
-				continue
 			}
-
 		}
 
 		// uniquely name and create new sheet
