@@ -1,0 +1,4 @@
+# Ignore All (xlsx) files
+*.xlsx
+
+.DS_Store

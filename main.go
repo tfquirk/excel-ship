@@ -27,7 +27,7 @@ func main() {
 			return
 		}
 
-		IPINames := helpers.GetIPINames(file)
+		IPINames := helpers.GetIPINames(file, start)
 		countOfShipmentReferences := helpers.CountShipmentReferences(file, IPINames)
 		helpers.CreateAnalysisSheet(file, countOfShipmentReferences)
 

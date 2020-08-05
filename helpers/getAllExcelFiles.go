@@ -25,6 +25,9 @@ func GetAllExcelFiles(wd string, start time.Time) []string {
 	// If no Excel files, exit with failure status
 	if len(excelFiles) == 0 {
 		elapsed := time.Since(start)
+		fmt.Println("")
+		fmt.Println("ERROR, Pipe!")
+		fmt.Println("")
 		fmt.Println("Execution ceased because no Excel files were found.")
 		fmt.Printf("Operation exited after %s\n", elapsed)
 		os.Exit(1)
