@@ -41,7 +41,7 @@ func CreateAnalysisSheet(file *excelize.File, shipmentCounts map[string]map[stri
 			newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
 			file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{fileNum, "", "", "", "", refNum, count, expectedCount, missing})
 
-			if missing > 0 {
+			if missing != 0 {
 				addErrStyle := xlsx.GetCellIDStringFromCoordsWithFixed(8, yCoordinate, false, false)
 				file.SetCellStyle(newSheet, addErrStyle, addErrStyle, missingStyle)
 			}
