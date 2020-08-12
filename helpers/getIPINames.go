@@ -12,6 +12,7 @@ import (
 // GetIPINames gets all company names from the IPI tab
 // return a map of company names to be referenced
 func GetIPINames(file *excelize.File, start time.Time) map[string]bool {
+	fmt.Print("Getting IPI Names.\n\n")
 	IPIRows, _ := file.GetRows("IPI")
 	IPINames := make(map[string]bool)
 	for name := range IPIRows {

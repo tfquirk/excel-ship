@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
@@ -10,6 +11,7 @@ import (
 // CreateAnalysisSheet creates a new Excel sheet
 // with counts of each shipment reference id
 func CreateAnalysisSheet(file *excelize.File, shipmentCounts map[string]map[string]int) {
+	fmt.Print("Creating new tab with updated shipment counts.\n\n")
 	// uniquely name and create new sheet
 	newSheet := "Analysis " + time.Now().Local().Format(time.Stamp)
 	file.NewSheet(newSheet)
@@ -32,6 +34,8 @@ func CreateAnalysisSheet(file *excelize.File, shipmentCounts map[string]map[stri
 	missingStyle, _ := file.NewStyle(&excelize.Style{
 		Fill: excelize.Fill{Type: "pattern", Color: []string{"#DB7093"}, Pattern: 1},
 	})
+
+	staticShipmentCounts := GetStaticShipmentCounts()
 
 	// loop over each file and nested shipments
 	for fileNum, items := range shipmentCounts {

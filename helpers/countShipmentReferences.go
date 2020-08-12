@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"fmt"
+
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/tealeg/xlsx"
 )
@@ -8,6 +10,7 @@ import (
 // CountShipmentReferences tracks all file names,
 // and counts the shipment refs in each
 func CountShipmentReferences(file *excelize.File, IPINames map[string]bool) map[string]map[string]int {
+	fmt.Print("Counting all shipment reference numbers.\n\n")
 	// instantiate a map of fileNumbers to keep track of multiple files
 	countsOfShipmentRefIds := make(map[string]map[string]int)
 
