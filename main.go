@@ -18,6 +18,7 @@ func main() {
 	excelFiles := helpers.GetAllExcelFiles(wd, start)
 
 	// read each Excel file
+	// get tracked file numbers/ship ref and expected counts
 	// count number of shipment references and validate against IPI names
 	// save counts as new Excel sheet
 	for _, excelFileName := range excelFiles {
@@ -28,8 +29,10 @@ func main() {
 		}
 
 		IPINames := helpers.GetIPINames(file, start)
-		countOfShipmentReferences := helpers.CountShipmentReferences(file, IPINames)
-		helpers.CreateAnalysisSheet(file, countOfShipmentReferences)
+		expectedShipmentCounts := helpers.ExpectedShipmentCounts(file)
+		countOfShipmentReferences, missingFileNumbers := helpers.CountShipmentReferences(expectedShipmentCounts, file, IPINames)
+		println(len(missingFileNumbers))
+		helpers.CreateAnalysisSheet(file, countOfShipmentReferences, expectedShipmentCounts) //, missingFileNumbers
 
 	}
 
