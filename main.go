@@ -28,13 +28,14 @@ func main() {
 		}
 
 		IPINames := helpers.GetIPINames(file, start)
-		countOfShipmentReferences := helpers.CountShipmentReferences(file, IPINames)
-		helpers.CreateAnalysisSheet(file, countOfShipmentReferences)
+		expectedShipmentCounts, fileNumbers, sortedFileNumbers := helpers.ExpectedShipmentCounts(file)
+		countOfShipmentReferences, numerosSinFacturas := helpers.CountShipmentReferences(file, expectedShipmentCounts, fileNumbers, IPINames)
+		helpers.CreateAnalysisSheet(file, countOfShipmentReferences, expectedShipmentCounts, numerosSinFacturas, sortedFileNumbers)
 
 	}
 
 	// Log performance to command line for general interest purposes
 	elapsed := time.Since(start)
 	fmt.Println("Execution completed.")
-	fmt.Printf("Operation took %s\n", elapsed)
+	fmt.Printf("Operation took %s\n\n", elapsed)
 }
