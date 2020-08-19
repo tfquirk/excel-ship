@@ -46,13 +46,14 @@ func CreateAnalysisSheet(file *excelize.File, shipmentCounts map[string]map[stri
 	for _, fileNum := range sortedFileNumbers {
 		if _, ok := shipmentCounts[fileNum]; ok {
 
-			// for legibility, and consitency sort ship ref numbers before iterating over them
+			// for legibility and consitency sort ship ref numbers before iterating over them
 			sortedShipmentReferences := []string{}
 			for key := range shipmentCounts[fileNum] {
 				sortedShipmentReferences = append(sortedShipmentReferences, key)
 			}
 			sort.Strings(sortedShipmentReferences)
 
+			// create each row and assemble the required information to print in the appropriate cells
 			for _, refNum := range sortedShipmentReferences {
 				expectedCount := expectedCounts[fileNum][refNum]
 				count := shipmentCounts[fileNum][refNum]
@@ -60,25 +61,29 @@ func CreateAnalysisSheet(file *excelize.File, shipmentCounts map[string]map[stri
 				newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
 				file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{fileNum, "", "", "", "", refNum, count, expectedCount, missing})
 
+				// highlight cell with red background when actual invoice count does not match expected
 				if missing != 0 {
 					addErrStyle := xlsx.GetCellIDStringFromCoordsWithFixed(8, yCoordinate, false, false)
 					file.SetCellStyle(newSheet, addErrStyle, addErrStyle, missingStyle)
 				}
 
+				// bump so next loop writes on a new row
 				yCoordinate++
 			}
 		}
 
-		// Add empty line between different files
+		// Add empty line between different file numbers
 		newRowCoordinates := xlsx.GetCellIDStringFromCoordsWithFixed(xCoordinate, yCoordinate, false, false)
 		file.SetSheetRow(newSheet, newRowCoordinates, &[]interface{}{"", "", "", "", "", "", "", "", ""})
 		yCoordinate++
 	}
 
-	// track position so we can dynamically write new rows
+	// track position so we can dynamically write new rows for
+	// file numbers that were tracked but did not have associated invoices
 	sinFacturasXCoordinate := 12
 	sinFacturasYCoordinate := 1
 
+	// create column header and add style
 	file.SetCellValue(newSheet, "M1", "File numbers with any invoices:")
 	file.SetCellStyle(newSheet, "M1", "M1", missingFileNumStyles)
 

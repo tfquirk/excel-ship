@@ -18,6 +18,7 @@ func main() {
 	excelFiles := helpers.GetAllExcelFiles(wd, start)
 
 	// read each Excel file
+	// Review 'AN' tab and gather expected shipment counts, file numbers, and a sorted version of the file numbers
 	// count number of shipment references and validate against IPI names
 	// save counts as new Excel sheet
 	for _, excelFileName := range excelFiles {
@@ -31,7 +32,6 @@ func main() {
 		expectedShipmentCounts, fileNumbers, sortedFileNumbers := helpers.ExpectedShipmentCounts(file)
 		countOfShipmentReferences, numerosSinFacturas := helpers.CountShipmentReferences(file, expectedShipmentCounts, fileNumbers, IPINames)
 		helpers.CreateAnalysisSheet(file, countOfShipmentReferences, expectedShipmentCounts, numerosSinFacturas, sortedFileNumbers)
-
 	}
 
 	// Log performance to command line for general interest purposes

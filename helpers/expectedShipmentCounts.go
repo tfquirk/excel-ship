@@ -39,6 +39,8 @@ func ExpectedShipmentCounts(file *excelize.File) (map[string]map[string]int, map
 
 	// create a map of just the file numbers, which can then
 	// updated once shipments are verified
+	// also create a sorted version, so that list can be used
+	// to print from in the same order on various program executions
 	fileNumbers := make(map[string]bool)
 	sortedFileNumbers := []string{}
 	for key := range expectedShipmentRefCounts {
